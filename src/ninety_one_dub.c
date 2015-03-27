@@ -87,20 +87,25 @@ static unsigned short get_display_hour(unsigned short hour) {
 
 
 static void update_display(struct tm *current_time) {
+	
+	//setup an if statement for:
+	//if 24 hour time, use an even smaller set of #s for time
+	//else (if 12 hour) use the below
   set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(69, 61));
-  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday / 10], GPoint(108, 61));
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday % 10], GPoint(121, 61));
+  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(108, 61));//switched to tm_sec
+  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(121, 61));//not currently working
 
   unsigned short display_hour = get_display_hour(current_time->tm_hour);
-  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(10, 84));
-  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(40, 84));
+  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(8, 115));//original x = 10
+  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(32, 115));//knocking everything back by 2
 
-  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(77, 84));
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(105, 84));
+  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(64, 115));//only for now
+  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(90, 115));//comments are fun
 	
 	
 	/*
 	//the too-dumb-lazy-etc-to-use-github-backup...
+	//but then i setup a github so uh... whee
 	
 	set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(69, 61));
   set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday / 10], GPoint(108, 61));
@@ -126,6 +131,8 @@ static void update_display(struct tm *current_time) {
   set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday % 10], GPoint(121, 61));
 	
 	*/
+	
+	//hmm... maybe... but probably... idk maybe overlay something... nah thats dumb nevermind
 
   if (!clock_is_24h_style()) {
     if (current_time->tm_hour >= 12) {

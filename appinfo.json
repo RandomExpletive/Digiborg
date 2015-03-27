@@ -3,11 +3,16 @@
     "capabilities": [
         ""
     ],
-    "companyName": "Pebble Technology & orviwan",
-    "longName": "91 Dub",
+    "companyName": "RyanM",
+    "longName": "Digiborg",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/num_1s_transparent.png",
+                "name": "IMAGE_NUM_T_1",
+                "type": "png-trans"
+            },
             {
                 "file": "images/num_9s.png",
                 "name": "IMAGE_NUM_SMALL_9",
@@ -65,6 +70,7 @@
             },
             {
                 "file": "images/icon.png",
+                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "png"
             },
@@ -255,14 +261,11 @@
             }
         ]
     },
-    "sdkVersion": "3",
-    "shortName": "91 Dub",
-    "targetPlatforms": [
-        "aplite"
-    ],
+    "sdkVersion": "2",
+    "shortName": "Db",
     "uuid": "7112d624-6555-4279-89ae-c086e9369427",
     "versionCode": 3,
-    "versionLabel": "3.0",
+    "versionLabel": "0.1",
     "watchapp": {
         "watchface": true
     }
