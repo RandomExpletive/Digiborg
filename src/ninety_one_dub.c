@@ -7,6 +7,10 @@
 
 #define TOTAL_DATE_DIGITS 2
 #define TOTAL_TIME_DIGITS 4
+#define PM_X 15
+#define PM_Y 107
+#define PM_W 10
+#define PM_H 6
 //#define TOTAL_TIME_DIGITS 6 (might not be necessary :D)
 
 static const int DAY_NAME_IMAGE_RESOURCE_IDS[] = {
@@ -32,9 +36,9 @@ static const int DATENUM_IMAGE_RESOURCE_IDS[] = {
   RESOURCE_ID_IMAGE_DATENUM_8,
   RESOURCE_ID_IMAGE_DATENUM_9
 };
-//these will need to be re-sized to fit all content in the time display area
-//once re-sized and locations determined, re-draw and re-upload background.png to include the : seperators
-//also figure out what looks better, a : between minutes and seconds, or just blank space
+//re-size complete, further tweaking
+//seperators included, perhaps add another 2 pixels on the right side of each :
+//definitely blank space between minutes and seconds
 static const int BIG_DIGIT_IMAGE_RESOURCE_IDS[] = {
   RESOURCE_ID_IMAGE_NUM_SMALL_0,
   RESOURCE_ID_IMAGE_NUM_SMALL_1,
@@ -91,53 +95,26 @@ static void update_display(struct tm *current_time) {
 	//setup an if statement for:
 	//if 24 hour time, use an even smaller set of #s for time
 	//else (if 12 hour) use the below
-  set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(69, 61));
-  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(108, 61));//switched to tm_sec
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(121, 61));//not currently working
+	//or don't because this should be fine, except from 8 PM onward it'll look like ass :D
+  set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(108, 92));
+  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(111, 125));//switched to tm_sec
+  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(122, 125));//not currently working
 
   unsigned short display_hour = get_display_hour(current_time->tm_hour);
-  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(8, 115));//original x = 10
-  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(32, 115));//knocking everything back by 2
+  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(7, 114));//original x = 10
+  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(31, 114));//knocking everything back by 2
 
-  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(64, 115));//only for now
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(90, 115));//comments are fun
+  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(60, 114));//only for now
+  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(86, 114));//comments are fun
 	
-	
-	/*
-	//the too-dumb-lazy-etc-to-use-github-backup...
-	//but then i setup a github so uh... whee
-	
-	set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(69, 61));
-  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday / 10], GPoint(108, 61));
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday % 10], GPoint(121, 61));
-
-  unsigned short display_hour = get_display_hour(current_time->tm_hour);
-  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(10, 84));
-  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(40, 84));
-
-  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(77, 84));
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(105, 84));
-	
-	//wew
-	*/
-	
-	/*
-	//if follows the above formatting... try substituting the date info for layers and the array locations
-	set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(77, 84));
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(105, 84));
-	
-	//something in here ought to work with the above
-	set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday / 10], GPoint(108, 61));
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday % 10], GPoint(121, 61));
-	
-	*/
+	//now figure out how to update the seconds every, well, second :D
 	
 	//hmm... maybe... but probably... idk maybe overlay something... nah thats dumb nevermind
 
   if (!clock_is_24h_style()) {
     if (current_time->tm_hour >= 12) {
     	layer_set_hidden(bitmap_layer_get_layer(s_time_format_layer), false);
-      set_container_image(&s_time_format_bitmap, s_time_format_layer, RESOURCE_ID_IMAGE_PM_MODE, GPoint(17, 68));
+      set_container_image(&s_time_format_bitmap, s_time_format_layer, RESOURCE_ID_IMAGE_PM_SMALL, GPoint(PM_X, PM_Y));//removed magic #s, to change see var on top
     } else {
     	layer_set_hidden(bitmap_layer_get_layer(s_time_format_layer), true);
     }
@@ -150,8 +127,15 @@ static void update_display(struct tm *current_time) {
   }
 }
 
+//perhaps change this to handle_second_tick?
+/*
 static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   update_display(tick_time);
+}
+*/
+static void handle_second_tick(struct tm*tick_time, TimeUnits units_changed)
+	{
+	update_display(tick_time);
 }
 
 static void main_window_load(Window *window) {
@@ -180,7 +164,7 @@ static void main_window_load(Window *window) {
 #else
     bitmap_bounds = s_time_format_bitmap->bounds;
 #endif
-    GRect frame = GRect(17, 68, bitmap_bounds.size.w, bitmap_bounds.size.h);
+    GRect frame = GRect(PM_X, PM_Y, PM_W, PM_H);//got rid of magic #'s, to change x/y of PM display use the var at top
     s_time_format_layer = bitmap_layer_create(frame);
     bitmap_layer_set_bitmap(s_time_format_layer, s_time_format_bitmap);
     layer_add_child(window_layer, bitmap_layer_get_layer(s_time_format_layer));
@@ -248,7 +232,7 @@ static void init() {
   struct tm *tick_time = localtime(&now);
   update_display(tick_time);
 
-  tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
+  tick_timer_service_subscribe(MINUTE_UNIT, handle_second_tick);
 }
 
 static void deinit() {

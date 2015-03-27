@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/PM_mode.png",
+                "name": "IMAGE_PM_SMALL",
+                "type": "png"
+            },
+            {
                 "file": "images/num_1s_transparent.png",
                 "name": "IMAGE_NUM_T_1",
                 "type": "png-trans"
