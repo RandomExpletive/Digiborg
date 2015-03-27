@@ -1,2 +1,2 @@
 # Digiborg
-Digiborg watchface
+Digiborg watchface for Pebble
