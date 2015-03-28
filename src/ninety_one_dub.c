@@ -11,7 +11,6 @@
 #define PM_Y 107
 #define PM_W 10
 #define PM_H 6
-//#define TOTAL_TIME_DIGITS 6 (might not be necessary :D)
 
 static const int DAY_NAME_IMAGE_RESOURCE_IDS[] = {
   RESOURCE_ID_IMAGE_DAY_SMALL_SU,
@@ -36,9 +35,7 @@ static const int DATENUM_IMAGE_RESOURCE_IDS[] = {
   RESOURCE_ID_IMAGE_DATENUM_8,
   RESOURCE_ID_IMAGE_DATENUM_9
 };
-//re-size complete, further tweaking
-//seperators included, perhaps add another 2 pixels on the right side of each :
-//definitely blank space between minutes and seconds
+//re-size complete, further tweaking may be needed to clean up edges
 static const int BIG_DIGIT_IMAGE_RESOURCE_IDS[] = {
   RESOURCE_ID_IMAGE_NUM_SMALL_0,
   RESOURCE_ID_IMAGE_NUM_SMALL_1,
@@ -94,23 +91,59 @@ static unsigned short get_display_hour(unsigned short hour) {
 
 static void update_display(struct tm *current_time) {
 	
-	//setup an if statement for:
-	//if 24 hour time, use a more compact x/y grouping on the minutes and hours
-	//else (if 12 hour) use the below
-	//or don't because this should be fine, except from 8 PM onward it'll look like ass :D
-  set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(108, 92));
-  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(113, 125));//switched to tm_sec
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(124, 125));//not working correctly
-
-  unsigned short display_hour = get_display_hour(current_time->tm_hour);
-  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(9, 114));
-  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(35, 114));
-
-  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(63, 114));
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(89, 114));
+	//make an if/else for 12 vs 24 hour
+	//if 24 hour, do the below
+	//if 12, move the hours say, 5 to the left, minutes 4, and seconds 3 or 2. Experiment to find best looking for 12 hour
+	//if possible, move the : between hours and minutes
+	//this may require making a new image to serve as the moving : display, if a good position on the background.png cannot be found for both 12/24 hour displays
 	
-	//now figure out how to update the seconds every, well, second :D	
-
+	//displays the current day of the week
+	set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(108, 92));
+		
+	//I was the devil, I'm sorry c :P
+		
+	//displays the first and second digits of the seconds counter, respectively. Yes I should re-order and re-name for clarity. No I won't do that now
+  //set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(113, 125));
+  //set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(124, 125));
+		
+	//lets try this, maybe moving outside the if/else statement will rememdy this issue
+	//it wasn't but it seemed like the smart thing to do
+	unsigned short display_hour = get_display_hour(current_time->tm_hour);
+		
+	if(clock_is_24h_style())
+	{
+		//displays the first and second digits of the hour counter, respectively.
+	  //unsigned short display_hour = get_display_hour(current_time->tm_hour);
+		set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(9, 114));
+	  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(35, 114));
+	
+		//displays the first and second digits of the minute counter, respectively.
+	  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(63, 114));
+	  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(89, 114));
+		
+		//displays the first and second digits of the seconds counter, respectively.
+		set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(113, 125));
+ 		set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(124, 125));
+	}
+	else//12 hour display
+	{
+		//displays the first and second digits of the hour counter, respectively.
+	  //unsigned short display_hour = get_display_hour(current_time->tm_hour);
+		set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(6, 114));
+	  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(32, 114));
+	
+		//displays the first and second digits of the minute counter, respectively.
+	  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(62, 114));
+	  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(88, 114));
+		
+		//displays the first and second digits of the seconds counter, respectively.
+		set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(112, 125));
+ 		set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(124, 125));
+	}
+	
+	//i think this code block is responsible for placing the 24 hour or PM image, as well as hiding the 0 that would preceed a 12 hour display
+	//ex: 1 pm is shown as 1 instead of 01
+		
   if (!clock_is_24h_style()) {
     if (current_time->tm_hour >= 12) {
     	layer_set_hidden(bitmap_layer_get_layer(s_time_format_layer), false);
@@ -119,25 +152,22 @@ static void update_display(struct tm *current_time) {
     	layer_set_hidden(bitmap_layer_get_layer(s_time_format_layer), true);
     }
 
-    if (display_hour / 10 == 0) {
+    if (display_hour / 10 == 0) {//deleting a _ from display__hour O.o
     	layer_set_hidden(bitmap_layer_get_layer(s_time_digits_layers[0]), true);
     } else {
     	layer_set_hidden(bitmap_layer_get_layer(s_time_digits_layers[0]), false);
     }
   }
+	
 }
 
-//perhaps change this to handle_second_tick?
-/*
-static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
-  update_display(tick_time);
-}
-*/
+//does time things
 static void handle_second_tick(struct tm*tick_time, TimeUnits units_changed)
 	{
 	update_display(tick_time);
 }
 
+//whole lotta things in here I'll mess with that I shouldn't
 static void main_window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
 
@@ -183,6 +213,8 @@ static void main_window_load(Window *window) {
     layer_add_child(window_layer, bitmap_layer_get_layer(s_date_digits_layers[i]));
   }
 	
+	//added this a while ago, unsure if it's doing anything worth-while. Will figure this out in time
+	//jeez it takes 10 seconds to comment it out and run whats the holdup NO SHUT UP ITS FINE THO
 	time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_second_tick(current_time, SECOND_UNIT);

@@ -270,7 +270,7 @@
     "shortName": "Db",
     "uuid": "7112d624-6555-4279-89ae-c086e9369427",
     "versionCode": 3,
-    "versionLabel": "0.1",
+    "versionLabel": "0.4",
     "watchapp": {
         "watchface": true
     }
