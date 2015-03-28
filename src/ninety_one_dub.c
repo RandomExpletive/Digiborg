@@ -100,34 +100,16 @@ static void update_display(struct tm *current_time) {
 	//or don't because this should be fine, except from 8 PM onward it'll look like ass :D
   set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(108, 92));
   set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(113, 125));//switched to tm_sec
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(124, 125));//not currently working
+  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(124, 125));//not working correctly
 
   unsigned short display_hour = get_display_hour(current_time->tm_hour);
-  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(9, 114));//original x = 10
-  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(35, 114));//knocking everything back by 2
+  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(9, 114));
+  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(35, 114));
 
-  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(63, 114));//only for now
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(89, 114));//comments are fun
+  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(63, 114));
+  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(89, 114));
 	
-	/*
-	//this x/y spacing is perfect (or close to it) for 12 hour time
-	//oh wait maybe its fine this way god I'm bad at planning things out
-	set_container_image(&s_day_name_bitmap, s_day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[current_time->tm_wday], GPoint(108, 92));
-  set_container_image(&s_date_digits[0], s_date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec / 10], GPoint(111, 125));//switched to tm_sec
-  set_container_image(&s_date_digits[1], s_date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_sec % 10], GPoint(122, 125));//not currently working
-
-  unsigned short display_hour = get_display_hour(current_time->tm_hour);
-  set_container_image(&s_time_digits[0], s_time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour / 10], GPoint(7, 114));//original x = 10
-  set_container_image(&s_time_digits[1], s_time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour % 10], GPoint(31, 114));//knocking everything back by 2
-
-  set_container_image(&s_time_digits[2], s_time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min / 10], GPoint(60, 114));//only for now
-  set_container_image(&s_time_digits[3], s_time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min % 10], GPoint(86, 114));//comments are fun
-	
-	*/
-	
-	//now figure out how to update the seconds every, well, second :D
-	
-	//hmm... maybe... but probably... idk maybe overlay something... nah thats dumb nevermind
+	//now figure out how to update the seconds every, well, second :D	
 
   if (!clock_is_24h_style()) {
     if (current_time->tm_hour >= 12) {
@@ -258,7 +240,7 @@ static void init() {
   struct tm *tick_time = localtime(&now);
   update_display(tick_time);
 
-  tick_timer_service_subscribe(MINUTE_UNIT, handle_second_tick);
+  tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
 }
 
 static void deinit() {
